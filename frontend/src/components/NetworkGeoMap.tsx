@@ -550,25 +550,6 @@ export const NetworkGeoMap: React.FC<NetworkGeoMapProps> = ({ onNavigateToPredic
     return filteredCorridors.find((c) => c.id === activeCorridorId) || filteredCorridors[0] || CORRIDORS[0];
   }, [filteredCorridors, activeCorridorId]);
 
-  // Metric Legend statistics counts
-  const metricStats = useMemo(() => {
-    if (selectedMetric === 'demand') {
-      const high = filteredCorridors.filter((c) => c.predictedDemand >= 200).length;
-      const med = filteredCorridors.filter((c) => c.predictedDemand >= 70 && c.predictedDemand < 200).length;
-      const low = filteredCorridors.filter((c) => c.predictedDemand < 70).length;
-      return { high, med, low };
-    } else if (selectedMetric === 'occupancy') {
-      const high = filteredCorridors.filter((c) => c.occupancy >= 92).length;
-      const med = filteredCorridors.filter((c) => c.occupancy >= 85 && c.occupancy < 92).length;
-      const low = filteredCorridors.filter((c) => c.occupancy < 85).length;
-      return { high, med, low };
-    } else {
-      const high = filteredCorridors.filter((c) => c.fare >= 3000).length;
-      const med = filteredCorridors.filter((c) => c.fare >= 500 && c.fare < 3000).length;
-      const low = filteredCorridors.filter((c) => c.fare < 500).length;
-      return { high, med, low };
-    }
-  }, [filteredCorridors, selectedMetric]);
 
   // ECharts Geographic Map Option
   const mapOption = useMemo(() => {
@@ -1037,110 +1018,6 @@ export const NetworkGeoMap: React.FC<NetworkGeoMapProps> = ({ onNavigateToPredic
                 style={{ height: '100%', width: '100%' }}
                 notMerge={true}
               />
-
-              {/* Dynamic Map Legend Overlay */}
-              <div className="absolute bottom-3 left-3 bg-white/95 p-3 rounded-xl border border-white/95 shadow-sm backdrop-blur-md text-[10.5px] space-y-1.5 z-10 min-w-[200px]">
-                {selectedMetric === 'demand' && (
-                  <>
-                    <div className="flex items-center justify-between font-bold text-indigo-950 uppercase tracking-wider text-[10px] pb-1 border-b border-indigo-50">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-3 h-3 text-indigo-600" />
-                        Demand Volume Scale
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-700">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-indigo-600" />
-                        <span>Trunk Line (&gt;200 pax)</span>
-                      </div>
-                      <span className="font-mono font-bold text-indigo-700 bg-indigo-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.high} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-700">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-sky-500" />
-                        <span>Medium Flow (70–200 pax)</span>
-                      </div>
-                      <span className="font-mono font-bold text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.med} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-700">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-slate-400" />
-                        <span>Regional Line (&lt;70 pax)</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.low} routes</span>
-                    </div>
-                  </>
-                )}
-
-                {selectedMetric === 'occupancy' && (
-                  <>
-                    <div className="flex items-center justify-between font-bold text-rose-950 uppercase tracking-wider text-[10px] pb-1 border-b border-rose-50">
-                      <span className="flex items-center gap-1">
-                        <Flame className="w-3 h-3 text-rose-600" />
-                        Occupancy Stress Scale
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-rose-800 font-semibold">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-rose-600" />
-                        <span>Critical Surge (&gt;92%)</span>
-                      </div>
-                      <span className="font-mono font-bold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.high} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-amber-800 font-medium">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-amber-500" />
-                        <span>High Load (85–92%)</span>
-                      </div>
-                      <span className="font-mono font-bold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.med} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-sky-800">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-sky-500" />
-                        <span>Balanced (&lt;85%)</span>
-                      </div>
-                      <span className="font-mono font-bold text-sky-700 bg-sky-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.low} routes</span>
-                    </div>
-                  </>
-                )}
-
-                {selectedMetric === 'fare' && (
-                  <>
-                    <div className="flex items-center justify-between font-bold text-purple-950 uppercase tracking-wider text-[10px] pb-1 border-b border-purple-50">
-                      <span className="flex items-center gap-1">
-                        <IndianRupee className="w-3 h-3 text-purple-600" />
-                        Fare Tier Spectrum
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between text-purple-900 font-medium">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-purple-600" />
-                        <span>Premium Trunk (&gt;₹3,000)</span>
-                      </div>
-                      <span className="font-mono font-bold text-purple-700 bg-purple-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.high} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-cyan-900 font-medium">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-cyan-600" />
-                        <span>Rail Express (₹500–₹3k)</span>
-                      </div>
-                      <span className="font-mono font-bold text-cyan-700 bg-cyan-50 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.med} routes</span>
-                    </div>
-                    <div className="flex items-center justify-between text-slate-700">
-                      <div className="flex items-center gap-2">
-                        <span className="w-3 h-1.5 rounded-full bg-slate-500" />
-                        <span>State Bus (&lt;₹500)</span>
-                      </div>
-                      <span className="font-mono font-bold text-slate-700 bg-slate-100 px-1.5 py-0.2 rounded text-[9.5px]">{metricStats.low} routes</span>
-                    </div>
-                  </>
-                )}
-
-                <div className="flex items-center gap-2 text-slate-600 pt-1 border-t border-slate-100">
-                  <span className="w-2 h-2 rounded-full bg-indigo-600 animate-ping" />
-                  <span>Interactive Node Hubs</span>
-                </div>
-              </div>
 
               {!isDrawerOpen && (
                 <button
